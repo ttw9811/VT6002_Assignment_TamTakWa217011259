@@ -15,9 +15,13 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import java.util.concurrent.Executor
 import android.content.Intent
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import android.text.Layout
 import android.util.Log
 import android.view.View
+import android.widget.EditText
+import androidx.browser.trusted.sharing.ShareTarget.FileFormField.KEY_NAME
 import com.example.vt6002_assignment_tamtakwa217011259.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -28,7 +32,12 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import java.lang.Exception
-
+import java.nio.charset.Charset
+import java.security.KeyStore
+import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
 
 
 class LoginPage : AppCompatActivity() {
@@ -58,10 +67,12 @@ class LoginPage : AppCompatActivity() {
 
                 override fun onAuthenticationSucceeded(
                     result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    Toast.makeText(applicationContext,
-                        "Authentication succeeded!", Toast.LENGTH_SHORT)
-                        .show()
+                    val plaintext_string = ""
+                    val encryptedInfo: ByteArray? = result.cryptoObject?.cipher?.doFinal(
+                        plaintext_string.toByteArray(Charset.defaultCharset())
+                    )
+                    Log.d("MY_APP_TAG", "Encrypted information: " +
+                            Arrays.toString(encryptedInfo))
                     finish()
                 }
 
@@ -77,13 +88,17 @@ class LoginPage : AppCompatActivity() {
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Biometric login for my app")
             .setSubtitle("Log in using your biometric credential")
-            .setNegativeButtonText("Use account password")
+            .setNegativeButtonText("Cancel")
             .build()
 
         val biometricLoginButton =
             findViewById<Button>(R.id.finger)
         biometricLoginButton.setOnClickListener {
-            biometricPrompt.authenticate(promptInfo)
+            val cipher = getCipher()
+            val secretKey = getSecretKey()
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+            biometricPrompt.authenticate(promptInfo,
+                BiometricPrompt.CryptoObject(cipher))
         }
 
         var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -175,4 +190,58 @@ class LoginPage : AppCompatActivity() {
             }
     }
 
+    fun login(view:View){
+        val editTextEmailAddress:EditText = findViewById(R.id.acInput)
+        val email=editTextEmailAddress.text.toString()
+        val editTextPassword:EditText = findViewById(R.id.pwdIn)
+        val password=editTextPassword.text.toString()
+
+        firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener{ task->
+            if(task.isSuccessful){
+                Toast.makeText(applicationContext, "" +
+                        "Login Success",
+                    Toast.LENGTH_SHORT)
+                    .show()
+                finish()
+            }
+        }.addOnFailureListener { exception->
+            Toast.makeText(applicationContext,exception.localizedMessage, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun generateSecretKey(keyGenParameterSpec: KeyGenParameterSpec) {
+        val keyGenerator = KeyGenerator.getInstance(
+            KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+        keyGenerator.init(keyGenParameterSpec)
+        keyGenerator.generateKey()
+    }
+
+    private fun getSecretKey(): SecretKey {
+        val keyStore = KeyStore.getInstance("AndroidKeyStore")
+
+        // Before the keystore can be accessed, it must be loaded.
+        keyStore.load(null)
+        return keyStore.getKey(KEY_NAME, null) as SecretKey
+    }
+
+    private fun getCipher(): Cipher {
+        return Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
+                + KeyProperties.BLOCK_MODE_CBC + "/"
+                + KeyProperties.ENCRYPTION_PADDING_PKCS7)
+    }
+
+    init{
+        generateSecretKey(KeyGenParameterSpec.Builder(
+            KEY_NAME,
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+            .setUserAuthenticationRequired(true)
+            // Invalidate the keys if the user has registered a new biometric
+            // credential, such as a new fingerprint. Can call this method only
+            // on Android 7.0 (API level 24) or higher. The variable
+            // "invalidatedByBiometricEnrollment" is true by default.
+            .setInvalidatedByBiometricEnrollment(true)
+            .build())
+    }
 }

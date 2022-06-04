@@ -43,6 +43,7 @@
             android:id="@+id/biometric_login"
             android:layout_width="205dp"
             android:layout_height="wrap_content"
+            android:onClick="login"
             android:text="Login" />
 
         <Button

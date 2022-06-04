@@ -14,9 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VT6002_Assignment_TamTakWa217011259">
         <activity
-            android:name=".testLogin"
-            android:exported="false" />
-        <activity
             android:name=".signUp_page"
             android:exported="false" />
         <activity
