@@ -1,7 +1,9 @@
 package com.example.vt6002_assignment_tamtakwa217011259
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -13,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
@@ -39,13 +42,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         override fun onLocationResult(result: LocationResult) {
             mLastLocation = result.lastLocation
             // Add a marker in Sydney and move the camera
-            //val sydney = LatLng(mLastLocation!!.latitude, mLastLocation!!.longitude)
-            val sydney = LatLng(22.2834, 114.1563)
+            val sydney = LatLng(mLastLocation!!.latitude, mLastLocation!!.longitude)
+            //val sydney = LatLng(22.2834, 114.1563)
             mMap.addMarker(MarkerOptions().position(sydney).title("My Location"))
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,10.0f))
             val W = 6371;
-            val x = (114.155332 - 114.1563) * Math.cos((22.2834 + 22.28475) / 2);
-            val y = (22.28475 - 22.2834);
+            val x = (114.155332 - mLastLocation!!.longitude) * Math.cos((mLastLocation!!.latitude + 22.28475) / 2);
+            val y = (22.28475 - mLastLocation!!.latitude);
             val distance = Math.sqrt(x * x + y * y) * W;
             var mLongitudeText = findViewById<View>(R.id.distance) as TextView
             mLongitudeText!!.text = distance.toString()
@@ -108,6 +111,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         acceleration = 10f
         currentAcceleration = SensorManager.GRAVITY_EARTH
         lastAcceleration = SensorManager.GRAVITY_EARTH
+
 
     }
 
@@ -179,4 +183,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onPause()
     }
 
+    fun openSignIn(view: View){
+        val btn:Button = findViewById(R.id.openLogin)
+        if(btn.text=="Sign in"){
+            val intent = Intent(this, LoginPage::class.java )
+            startActivity(intent)
+        }else{
+            val intent = Intent(this, MainActivity::class.java )
+            startActivity(intent)
+        }
+    }
 }
