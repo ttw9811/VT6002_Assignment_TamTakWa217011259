@@ -193,4 +193,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             startActivity(intent)
         }
     }
+
+    fun openList(view: View){
+        val intent = Intent(this, PhotoListActivity::class.java )
+        startActivity(intent)
+    }
 }

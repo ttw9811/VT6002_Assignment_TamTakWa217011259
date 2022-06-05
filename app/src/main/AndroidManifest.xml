@@ -14,6 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VT6002_Assignment_TamTakWa217011259">
         <activity
+            android:name=".PhotoListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".photo_list"
+            android:exported="false" />
+        <activity
             android:name=".signUp_page"
             android:exported="false" />
         <activity
