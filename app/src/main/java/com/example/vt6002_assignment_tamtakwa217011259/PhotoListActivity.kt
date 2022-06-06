@@ -1,6 +1,7 @@
 package com.example.vt6002_assignment_tamtakwa217011259
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,8 +15,8 @@ import com.google.firebase.database.*
 
 class PhotoListActivity : AppCompatActivity() {
 
-    lateinit var _db: DatabaseReference
-    var _taskList: MutableList<Task>? = null
+    private lateinit var _db: DatabaseReference
+    private var _taskList: MutableList<Task>? = null
     lateinit var _adapter: TaskAdapter
 
     var _taskListener: ValueEventListener = object : ValueEventListener {
@@ -44,8 +45,10 @@ class PhotoListActivity : AppCompatActivity() {
 
             Log.d("list page","Name ${_adapter.getItemName(position)}")
             Log.d("list page","Price ${_adapter.getItemPrice(position)}")
-            Log.d("list page","View ${_adapter.getCount()}")
-            Log.d("list page","Position ${_adapter.getItemId(position)}")
+
+
+            //val intent = Intent(this, testPay::class.java )
+            //startActivity(intent)
         }
         _db.orderByKey().addValueEventListener(_taskListener)
 

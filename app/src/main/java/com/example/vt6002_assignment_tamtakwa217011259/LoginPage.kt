@@ -22,6 +22,7 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.browser.trusted.sharing.ShareTarget.FileFormField.KEY_NAME
+import androidx.lifecycle.ViewModelProvider
 import com.example.vt6002_assignment_tamtakwa217011259.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -41,6 +42,7 @@ import javax.crypto.SecretKey
 
 
 class LoginPage : AppCompatActivity() {
+    private lateinit var myViewModel: MyViewModel
     private lateinit var executor: Executor
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
@@ -51,6 +53,8 @@ class LoginPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_page)
+
+        myViewModel = ViewModelProvider(this).get(MyViewModel::class.java)
 
         executor = ContextCompat.getMainExecutor(this)
 
@@ -73,6 +77,7 @@ class LoginPage : AppCompatActivity() {
                     )
                     Log.d("MY_APP_TAG", "Encrypted information: " +
                             Arrays.toString(encryptedInfo))
+                    myViewModel.openBtnStr = "Sign Out"
                     finish()
                 }
 
@@ -116,6 +121,8 @@ class LoginPage : AppCompatActivity() {
             val intent = mGoogleSignInClient.signInIntent
             startActivityForResult(intent,100)
         }
+
+
     }
 
     override fun onResume() {
@@ -179,10 +186,7 @@ class LoginPage : AppCompatActivity() {
                 }else{
                     Log.d("GOOGLE_SIGN_IN_TAG","onActivityResult: existing user")
                 }
-                val openDialog = Dialog(this)
-                openDialog.setContentView(R.layout.activity_main)
-                val btnYES = openDialog.findViewById<Button>(R.id.openLogin)
-                    btnYES.text="Sign Out"
+                myViewModel.openBtnStr = "Sign Out"
                 finish()
             }
             .addOnFailureListener{ e ->
@@ -202,6 +206,7 @@ class LoginPage : AppCompatActivity() {
                         "Login Success",
                     Toast.LENGTH_SHORT)
                     .show()
+                myViewModel.openBtnStr = "Sign Out"
                 finish()
             }
         }.addOnFailureListener { exception->
