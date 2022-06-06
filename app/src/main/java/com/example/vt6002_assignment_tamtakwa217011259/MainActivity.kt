@@ -35,7 +35,7 @@ import java.lang.Math.sqrt
 import java.util.*
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
-    private lateinit var myViewModel: MyViewModel
+    //private lateinit var myViewModel: MyViewModel
 
     protected var mLastLocation: Location? = null
     protected var mLocationRequest: LocationRequest? = null
@@ -117,9 +117,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         currentAcceleration = SensorManager.GRAVITY_EARTH
         lastAcceleration = SensorManager.GRAVITY_EARTH
 
-        myViewModel = ViewModelProvider(this).get(MyViewModel::class.java)
+        //myViewModel = ViewModelProvider(this).get(MyViewModel::class.java)
         val openSignPageBtn:Button = findViewById(R.id.openLogin)
-        openSignPageBtn.text = myViewModel.openBtnStr
+        Log.d("dsadsadsa","dsadsads ${MySignleton.openLoginPageOBj.openLoginPageBtn}")
+        openSignPageBtn.text=MySignleton.openLoginPageOBj.openLoginPageBtn
+        //openSignPageBtn.text = myViewModel.openBtnStr
     }
 
 
@@ -170,7 +172,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             // Display a Toast message if
             // acceleration value is over 12
-            if (acceleration > 12) {
+            if (acceleration > 10) {
                 Toast.makeText(applicationContext, "Shake Location", Toast.LENGTH_SHORT).show()
                 onStartClicked(null)
             }
@@ -196,10 +198,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val intent = Intent(this, LoginPage::class.java )
             startActivity(intent)
         }else{
-            myViewModel.openBtnStr = "Sign In"
-            Log.d("dsadasdsa","fdsadsadsa ${myViewModel.openBtnStr}")
-            val intent = Intent(this, MainActivity::class.java )
-            startActivity(intent)
+            Log.d("dsadasdsa","fdsadsads log out")
+            MySignleton.openLoginPageOBj.openLoginPageBtn = "Sign In"
+            Log.d("dsadasdsa","fdsadsads ${MySignleton.openLoginPageOBj.openLoginPageBtn}")
+            btn.text = MySignleton.openLoginPageOBj.openLoginPageBtn
+            //myViewModel.openBtnStr = "Sign In"
+            //Log.d("dsadasdsa","fdsadsadsa ${myViewModel.openBtnStr}")
+            //val intent = Intent(this, MainActivity::class.java )
+            //startActivity(intent)
         }
     }
 
