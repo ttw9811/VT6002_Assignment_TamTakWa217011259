@@ -39,6 +39,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
 
+                android:onClick="openSignIn"
                 android:text="Sign in" />
         </LinearLayout>
 
@@ -85,6 +86,7 @@
             android:id="@+id/List"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:onClick="openList"
             android:text="List" />
     </LinearLayout>
 
