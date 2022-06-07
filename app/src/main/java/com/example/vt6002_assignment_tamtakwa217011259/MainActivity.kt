@@ -14,6 +14,7 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -21,6 +22,8 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
+import com.firebase.ui.auth.data.model.User
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -32,6 +35,8 @@ import java.lang.Math.sqrt
 import java.util.*
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+    //private lateinit var myViewModel: MyViewModel
+
     protected var mLastLocation: Location? = null
     protected var mLocationRequest: LocationRequest? = null
     protected var mGeocoder: Geocoder? = null
@@ -45,13 +50,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val sydney = LatLng(mLastLocation!!.latitude, mLastLocation!!.longitude)
             //val sydney = LatLng(22.2834, 114.1563)
             mMap.addMarker(MarkerOptions().position(sydney).title("My Location"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,10.0f))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,16.0f))
             val W = 6371;
             val x = (114.155332 - mLastLocation!!.longitude) * Math.cos((mLastLocation!!.latitude + 22.28475) / 2);
             val y = (22.28475 - mLastLocation!!.latitude);
-            val distance = Math.sqrt(x * x + y * y) * W;
+            val distance = sqrt(x * x + y * y) * W;
             var mLongitudeText = findViewById<View>(R.id.distance) as TextView
-            mLongitudeText!!.text = distance.toString()
+            mLongitudeText.text = distance.toString()
         }
     }
 
@@ -103,7 +108,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mLocationRequest!!.fastestInterval = 5
         mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         Objects.requireNonNull(sensorManager)!!
             .registerListener(sensorListener, sensorManager!!
                 .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
@@ -112,7 +117,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         currentAcceleration = SensorManager.GRAVITY_EARTH
         lastAcceleration = SensorManager.GRAVITY_EARTH
 
-
+        //myViewModel = ViewModelProvider(this).get(MyViewModel::class.java)
+        val openSignPageBtn:Button = findViewById(R.id.openLogin)
+        Log.d("dsadsadsa","dsadsads ${MySignleton.openLoginPageOBj.openLoginPageBtn}")
+        openSignPageBtn.text=MySignleton.openLoginPageOBj.openLoginPageBtn
+        //openSignPageBtn.text = myViewModel.openBtnStr
     }
 
 
@@ -183,14 +192,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onPause()
     }
 
-    fun openSignIn(view: View){
+    fun openSignIn(view:View){
         val btn:Button = findViewById(R.id.openLogin)
-        if(btn.text=="Sign in"){
+        if(btn.text=="Sign In"){
             val intent = Intent(this, LoginPage::class.java )
             startActivity(intent)
         }else{
-            val intent = Intent(this, MainActivity::class.java )
-            startActivity(intent)
+            Log.d("dsadasdsa","fdsadsads log out")
+            MySignleton.openLoginPageOBj.openLoginPageBtn = "Sign In"
+            Log.d("dsadasdsa","fdsadsads ${MySignleton.openLoginPageOBj.openLoginPageBtn}")
+            btn.text = MySignleton.openLoginPageOBj.openLoginPageBtn
+            //myViewModel.openBtnStr = "Sign In"
+            //Log.d("dsadasdsa","fdsadsadsa ${myViewModel.openBtnStr}")
+            //val intent = Intent(this, MainActivity::class.java )
+            //startActivity(intent)
         }
+    }
+
+    fun openList(view:View){
+        val intent = Intent(this, PhotoListActivity::class.java )
+        startActivity(intent)
     }
 }

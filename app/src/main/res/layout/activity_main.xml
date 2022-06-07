@@ -86,6 +86,7 @@
             android:id="@+id/List"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:onClick="openList"
             android:text="List" />
     </LinearLayout>
 

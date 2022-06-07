@@ -1,9 +1,11 @@
 package com.example.vt6002_assignment_tamtakwa217011259
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 
 class signUp_page : AppCompatActivity() {
@@ -24,6 +26,14 @@ class signUp_page : AppCompatActivity() {
         val editTextPassword:EditText = findViewById(R.id.pwdInput)
         val password=editTextPassword.text.toString()
 
+        auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener{ task->
+            if(task.isSuccessful){
+
+                finish()
+            }
+        }.addOnFailureListener{exception->
+            Toast.makeText(applicationContext,exception.localizedMessage, Toast.LENGTH_LONG).show()
+        }
 
 
 
