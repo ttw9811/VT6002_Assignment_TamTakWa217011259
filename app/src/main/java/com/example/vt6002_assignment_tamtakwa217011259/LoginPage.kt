@@ -77,8 +77,10 @@ class LoginPage : AppCompatActivity() {
                     )
                     Log.d("MY_APP_TAG", "Encrypted information: " +
                             Arrays.toString(encryptedInfo))
-                    myViewModel.openBtnStr = "Sign Out"
-                    finish()
+                    MySignleton.openLoginPageOBj.openLoginPageBtn = "Sign Out"
+
+                    //finish()
+                    openHomePage()
                 }
 
                 override fun onAuthenticationFailed() {
@@ -186,8 +188,9 @@ class LoginPage : AppCompatActivity() {
                 }else{
                     Log.d("GOOGLE_SIGN_IN_TAG","onActivityResult: existing user")
                 }
-                myViewModel.openBtnStr = "Sign Out"
-                finish()
+                MySignleton.openLoginPageOBj.openLoginPageBtn = "Sign Out"
+               // finish()
+                openHomePage()
             }
             .addOnFailureListener{ e ->
                 Log.d("GOOGLE_SIGN_IN_TAG","Loggin Failed")
@@ -206,8 +209,9 @@ class LoginPage : AppCompatActivity() {
                         "Login Success",
                     Toast.LENGTH_SHORT)
                     .show()
-                myViewModel.openBtnStr = "Sign Out"
-                finish()
+                MySignleton.openLoginPageOBj.openLoginPageBtn = "Sign Out"
+                //finish()
+                openHomePage()
             }
         }.addOnFailureListener { exception->
             Toast.makeText(applicationContext,exception.localizedMessage, Toast.LENGTH_LONG).show()
@@ -233,6 +237,11 @@ class LoginPage : AppCompatActivity() {
         return Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
                 + KeyProperties.BLOCK_MODE_CBC + "/"
                 + KeyProperties.ENCRYPTION_PADDING_PKCS7)
+    }
+
+    private fun openHomePage(){
+        val intent = Intent(this, MainActivity::class.java )
+        startActivity(intent)
     }
 
     init{
