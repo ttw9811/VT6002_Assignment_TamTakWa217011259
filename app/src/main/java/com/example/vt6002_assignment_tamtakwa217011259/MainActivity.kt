@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val sydney = LatLng(mLastLocation!!.latitude, mLastLocation!!.longitude)
             //val sydney = LatLng(22.2834, 114.1563)
             mMap.addMarker(MarkerOptions().position(sydney).title("My Location"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,10.0f))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,16.0f))
             val W = 6371;
             val x = (114.155332 - mLastLocation!!.longitude) * Math.cos((mLastLocation!!.latitude + 22.28475) / 2);
             val y = (22.28475 - mLastLocation!!.latitude);
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             // Display a Toast message if
             // acceleration value is over 12
-            if (acceleration > 10) {
+            if (acceleration > 12) {
                 Toast.makeText(applicationContext, "Shake Location", Toast.LENGTH_SHORT).show()
                 onStartClicked(null)
             }

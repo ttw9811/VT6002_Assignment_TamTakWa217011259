@@ -11,11 +11,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.database.*
+import com.paypal.checkout.approve.OnApprove
+import com.paypal.checkout.cancel.OnCancel
+import com.paypal.checkout.createorder.CreateOrder
+import com.paypal.checkout.createorder.CurrencyCode
+import com.paypal.checkout.createorder.OrderIntent
+import com.paypal.checkout.createorder.UserAction
+import com.paypal.checkout.error.OnError
+import com.paypal.checkout.order.Amount
+import com.paypal.checkout.order.AppContext
+import com.paypal.checkout.order.Order
+import com.paypal.checkout.order.PurchaseUnit
+import com.paypal.checkout.paymentbutton.PaymentButtonEligibilityStatus
 
-class PhotoListActivity : AppCompatActivity() {
-
-    private lateinit var _db: DatabaseReference
+class PhotoListActivity : AppCompatActivity(), TaskRowListener {
+    private lateinit var myViewModel: MyViewModel
+    lateinit var _db: DatabaseReference
     private var _taskList: MutableList<Task>? = null
     lateinit var _adapter: TaskAdapter
 
@@ -51,27 +64,45 @@ class PhotoListActivity : AppCompatActivity() {
             //startActivity(intent)
         }
         _db.orderByKey().addValueEventListener(_taskListener)
+        myViewModel = ViewModelProvider(this).get(MyViewModel::class.java)
 
-       /* var candidatePhotos: Array<Int> = arrayOf(
-            R.drawable.item1,
-            R.drawable.item2,
-            R.drawable.item3
-        )
-
-        var candidates = ArrayList<Candidate>()
-
-        for (i in 0 until candidateNames.size) {
-            val c = Candidate(candidateNames[i], candidateDetails[i], candidatePhotos[i])
-            candidates.add(c)
+        var payPalButton:com.paypal.checkout.paymentbutton.PayPalButton = findViewById(R.id.payPalButton)
+        payPalButton.onEligibilityStatusChanged = { buttonEligibilityStatus: PaymentButtonEligibilityStatus ->
+            Log.d("paypal ", "OnEligibilityStatusChanged")
+            Log.d("paypal ", "Button eligibility status: $buttonEligibilityStatus")
         }
-
-        val listView: ListView = this.findViewById(R.id.listViewComplex)
-        val listAdapter = CandidateAdapter(this, R.layout.list_item, candidates)
-        listView.adapter = listAdapter
-
-        listView.setOnItemClickListener { parent, view, position, id ->
-            Toast.makeText(this, "You clicked ${candidates[position].name}", Toast.LENGTH_LONG).show()
-        }*/
+        payPalButton.setup(
+            createOrder =
+            CreateOrder { createOrderActions ->
+                val order =
+                    Order(
+                        intent = OrderIntent.CAPTURE,
+                        appContext = AppContext(userAction = UserAction.PAY_NOW),
+                        purchaseUnitList =
+                        listOf(
+                            PurchaseUnit(
+                                amount =
+                                Amount(currencyCode = CurrencyCode.HKD, value = "${myViewModel.priceMax.toString()}.00")
+                            )
+                        )
+                    )
+                createOrderActions.create(order)
+            },
+            onApprove =
+            OnApprove { approval ->
+                approval.orderActions.capture { captureOrderResult ->
+                    Log.d("CaptureOrder", "CaptureOrderResult: $captureOrderResult")
+                }
+            },
+            onCancel = OnCancel {
+                Log.d("paypal ", "OnCancel")
+                Log.d("paypal ", "Buyer cancelled the checkout experience.")
+            },
+            onError = OnError { errorInfo ->
+                Log.d("paypal ", "OnError")
+                Log.d("paypal ", "Error details: $errorInfo")
+            }
+        )
     }
 
     data class Candidate(val name : String, val price : String, val photo : Int)
@@ -107,6 +138,19 @@ class PhotoListActivity : AppCompatActivity() {
         //alert adapter that has changed
         _adapter.notifyDataSetChanged()
     }
+
+    override fun onTaskChange(objectId: String, price:String, isDone: Boolean) {
+        Log.d("Select item ","item task ${objectId}")
+        Log.d("Select item ","item task ${price}")
+        Log.d("Select item ","item task ${isDone}")
+        if(isDone){
+            myViewModel.priceMax+=price.toInt()
+        }else{
+            myViewModel.priceMax-=price.toInt()
+        }
+        Log.d("Select item ","item task ${myViewModel.priceMax}")
+    }
+
 }
 
 

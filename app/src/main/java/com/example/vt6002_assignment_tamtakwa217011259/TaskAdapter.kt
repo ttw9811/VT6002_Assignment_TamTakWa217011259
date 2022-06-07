@@ -14,6 +14,7 @@ import java.util.*
 class TaskAdapter (context: Context, taskList: MutableList<Task>) : BaseAdapter(){
     private val _inflater: LayoutInflater = LayoutInflater.from(context)
     private var _taskList = taskList
+    private var _rowListener: TaskRowListener = context as TaskRowListener
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
@@ -41,6 +42,15 @@ class TaskAdapter (context: Context, taskList: MutableList<Task>) : BaseAdapter(
 
         listRowHolder.name.text = itemText
         listRowHolder.price.text = priceText
+        listRowHolder.done.isChecked = done
+        listRowHolder.done.setOnClickListener {
+            if(listRowHolder.done.isChecked.toString()== "true"){
+                _rowListener.onTaskChange(objectId, priceText, true)
+            }else{
+                _rowListener.onTaskChange(objectId, priceText, false)
+            }
+
+        }
         listRowHolder.image.setImageBitmap(BitmapFactory.decodeByteArray(imageBit, 0, imageBit.size))
         return view
     }
@@ -66,6 +76,7 @@ class TaskAdapter (context: Context, taskList: MutableList<Task>) : BaseAdapter(
     private class ListRowHolder(row: View?) {
         val name: TextView = row!!.findViewById(R.id.textViewName) as TextView
         val price: TextView = row!!.findViewById(R.id.textViewDetail) as TextView
+        val done: CheckBox = row!!.findViewById(R.id.chkDone) as CheckBox
         val image: ImageView =row!!.findViewById(R.id.imageView)  as ImageView
     }
 }

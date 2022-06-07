@@ -37,6 +37,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.paypal.checkout:android-sdk:0.6.2'
+
     implementation 'com.google.android.gms:play-services-location:19.0.1'
 
     implementation 'androidx.core:core-ktx:1.7.0'
