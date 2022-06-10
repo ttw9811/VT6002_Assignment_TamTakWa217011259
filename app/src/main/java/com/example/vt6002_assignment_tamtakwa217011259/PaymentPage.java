@@ -108,6 +108,7 @@ public class PaymentPage extends AppCompatActivity {
         if(paymentSheetResult instanceof PaymentSheetResult.Completed){
             Toast.makeText(PaymentPage.this,"Payment Success",Toast.LENGTH_SHORT);
             Log.d("PAY","onPaymentResult "+"Payment Success");
+            MySignleton.priceMax.INSTANCE.setPriceMax(0);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
