@@ -13,6 +13,6 @@ class Task {
     var objectId: String? = null
     var name: String? = null
     var price: String? = null
-    var image: ByteArray? = null
+    var image: String? = null
     var done: Boolean? = false
 }

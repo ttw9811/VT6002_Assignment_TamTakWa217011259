@@ -95,9 +95,9 @@ class PhotoListActivity : AppCompatActivity(), TaskRowListener {
                 task.done = map.get("done") as Boolean?
                 task.name = map.get("name") as String?
                 task.price = map.get("price") as String?
-                val imageBytes: ByteArray = Base64.decode(map.get("image") as String?, Base64.DEFAULT)
-
-                task.image =  imageBytes
+                //val imageBytes: ByteArray = Base64.decode(map.get("image") as String?, Base64.DEFAULT)
+                //val imageBytes = Base64.decode(map.get("image") as String?,Base64.DEFAULT)
+                task.image =  map.get("image")as String?
                 _taskList!!.add(task)
             }
         }

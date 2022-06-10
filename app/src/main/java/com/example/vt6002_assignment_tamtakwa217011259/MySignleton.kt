@@ -14,4 +14,5 @@ class MySignleton {
     object priceMax{
         var priceMax:Int = 0
     }
+
 }
