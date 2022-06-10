@@ -5,10 +5,12 @@
       <map>
         <entry key="..\:/APP/VT6002_Assignment_TamTakWa217011259/app/src/main/res/layout/activity_login_page.xml" value="0.25" />
         <entry key="..\:/APP/VT6002_Assignment_TamTakWa217011259/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/APP/VT6002_Assignment_TamTakWa217011259/app/src/main/res/layout/activity_payment_page.xml" value="0.25" />
         <entry key="..\:/APP/VT6002_Assignment_TamTakWa217011259/app/src/main/res/layout/activity_photo_list.xml" value="0.28940217391304346" />
-        <entry key="..\:/APP/VT6002_Assignment_TamTakWa217011259/app/src/main/res/layout/activity_sign_up_page.xml" value="0.27756653992395436" />
+        <entry key="..\:/APP/VT6002_Assignment_TamTakWa217011259/app/src/main/res/layout/activity_sign_up_page.xml" value="0.24414715719063546" />
         <entry key="..\:/APP/VT6002_Assignment_TamTakWa217011259/app/src/main/res/layout/activity_test_login.xml" value="0.1" />
         <entry key="..\:/APP/VT6002_Assignment_TamTakWa217011259/app/src/main/res/layout/list_item.xml" value="0.33" />
+        <entry key="..\:/APP/VT6002_Assignment_TamTakWa217011259/app/src/main/res/layout/payment_list_item.xml" value="0.28940217391304346" />
       </map>
     </option>
   </component>

@@ -45,7 +45,7 @@ class PhotoListActivity : AppCompatActivity(), TaskRowListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_list)
-
+        //connect firebase database
         _db = FirebaseDatabase.getInstance("https://ass-974e1-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
 
         _taskList = mutableListOf()
@@ -64,49 +64,16 @@ class PhotoListActivity : AppCompatActivity(), TaskRowListener {
             //startActivity(intent)
         }
         _db.orderByKey().addValueEventListener(_taskListener)
-        myViewModel = ViewModelProvider(this).get(MyViewModel::class.java)
 
-        var payPalButton:com.paypal.checkout.paymentbutton.PayPalButton = findViewById(R.id.payPalButton)
-        payPalButton.onEligibilityStatusChanged = { buttonEligibilityStatus: PaymentButtonEligibilityStatus ->
-            Log.d("paypal ", "OnEligibilityStatusChanged")
-            Log.d("paypal ", "Button eligibility status: $buttonEligibilityStatus")
-        }
-        payPalButton.setup(
-            createOrder =
-            CreateOrder { createOrderActions ->
-                val order =
-                    Order(
-                        intent = OrderIntent.CAPTURE,
-                        appContext = AppContext(userAction = UserAction.PAY_NOW),
-                        purchaseUnitList =
-                        listOf(
-                            PurchaseUnit(
-                                amount =
-                                Amount(currencyCode = CurrencyCode.HKD, value = "${myViewModel.priceMax.toString()}.00")
-                            )
-                        )
-                    )
-                createOrderActions.create(order)
-            },
-            onApprove =
-            OnApprove { approval ->
-                approval.orderActions.capture { captureOrderResult ->
-                    Log.d("CaptureOrder", "CaptureOrderResult: $captureOrderResult")
-                }
-            },
-            onCancel = OnCancel {
-                Log.d("paypal ", "OnCancel")
-                Log.d("paypal ", "Buyer cancelled the checkout experience.")
-            },
-            onError = OnError { errorInfo ->
-                Log.d("paypal ", "OnError")
-                Log.d("paypal ", "Error details: $errorInfo")
-            }
-        )
     }
 
     data class Candidate(val name : String, val price : String, val photo : Int)
 
+    /**
+    @Description/Purpose : load Cheongsam item in list and display
+    @Required Inputs : dataSnapshot
+    @Expected Outputs : display Cheongsam item
+     */
     private fun loadTaskList(dataSnapshot: DataSnapshot) {
         Log.d("MainActivity", "loadTaskList")
         val tasks = dataSnapshot.children.iterator()
@@ -128,9 +95,9 @@ class PhotoListActivity : AppCompatActivity(), TaskRowListener {
                 task.done = map.get("done") as Boolean?
                 task.name = map.get("name") as String?
                 task.price = map.get("price") as String?
-                val imageBytes: ByteArray = Base64.decode(map.get("image") as String?, Base64.DEFAULT)
-
-                task.image =  imageBytes
+                //val imageBytes: ByteArray = Base64.decode(map.get("image") as String?, Base64.DEFAULT)
+                //val imageBytes = Base64.decode(map.get("image") as String?,Base64.DEFAULT)
+                task.image =  map.get("image")as String?
                 _taskList!!.add(task)
             }
         }
@@ -139,18 +106,27 @@ class PhotoListActivity : AppCompatActivity(), TaskRowListener {
         _adapter.notifyDataSetChanged()
     }
 
+    /**
+    @Description/Purpose : select Cheongsam item and change MySignleton.priceMax.priceMax
+    @Required Inputs : objectId,price,isDone
+    @Expected Outputs : update MySignleton.priceMax.priceMax
+     */
     override fun onTaskChange(objectId: String, price:String, isDone: Boolean) {
         Log.d("Select item ","item task ${objectId}")
         Log.d("Select item ","item task ${price}")
         Log.d("Select item ","item task ${isDone}")
         if(isDone){
-            myViewModel.priceMax+=price.toInt()
+            MySignleton.priceMax.priceMax = MySignleton.priceMax.priceMax+price.toInt()
         }else{
-            myViewModel.priceMax-=price.toInt()
+            MySignleton.priceMax.priceMax = MySignleton.priceMax.priceMax+price.toInt()
         }
-        Log.d("Select item ","item task ${myViewModel.priceMax}")
+        Log.d("Select item ","item task ${MySignleton.priceMax.priceMax}")
     }
 
+    fun openPaymentPage(view:View){
+        val intent = Intent(this, PaymentPage::class.java )
+        startActivity(intent)
+    }
 }
 
 

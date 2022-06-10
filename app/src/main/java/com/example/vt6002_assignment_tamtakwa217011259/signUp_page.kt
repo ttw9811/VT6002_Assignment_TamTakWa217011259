@@ -19,6 +19,11 @@ class signUp_page : AppCompatActivity() {
         auth= FirebaseAuth.getInstance()
     }
 
+    /**
+    @Description/Purpose : Create new user account
+    @Required Inputs : email, password
+    @Expected Outputs : success or fail,success will return login page
+     */
     fun register(view: View){
         val editTextEmailAddress:EditText = findViewById(R.id.loginInput)
         val email=editTextEmailAddress.text.toString()

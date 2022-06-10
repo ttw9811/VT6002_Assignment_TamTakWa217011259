@@ -53,14 +53,18 @@ class LoginPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_page)
-
+        //get viewmodel class
         myViewModel = ViewModelProvider(this).get(MyViewModel::class.java)
 
         executor = ContextCompat.getMainExecutor(this)
 
         biometricPrompt = BiometricPrompt(this, executor,
             object : BiometricPrompt.AuthenticationCallback() {
-
+                /**
+                @Description/Purpose : use fingerprint login error
+                @Required Inputs : fingerprint
+                @Expected Outputs : display error message
+                 */
                 override fun onAuthenticationError(errorCode: Int,
                                                    errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
@@ -69,6 +73,11 @@ class LoginPage : AppCompatActivity() {
                         .show()
                 }
 
+                /**
+                @Description/Purpose : use fingerprint login success
+                @Required Inputs : fingerprint
+                @Expected Outputs : display home page
+                 */
                 override fun onAuthenticationSucceeded(
                     result: BiometricPrompt.AuthenticationResult) {
                     val plaintext_string = ""
@@ -117,6 +126,11 @@ class LoginPage : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
+        /**
+        @Description/Purpose : open google login interface
+        @Required Inputs :
+        @Expected Outputs : show google login interface
+         */
         var btSighIn: SignInButton = findViewById(R.id.googleSignInBtn)
         btSighIn.setOnClickListener{
             Log.d("GOOGLE_SIGN_IN_TAG","onCreate: begin Google SignIn")
@@ -145,16 +159,21 @@ class LoginPage : AppCompatActivity() {
         }
     }
 
+    /**
+    @Description/Purpose : open sign up page
+    @Required Inputs :
+    @Expected Outputs : display sign up page
+     */
     fun openSignUp(view: View){
         val intent = Intent(this, signUp_page::class.java )
         startActivity(intent)
     }
 
-    fun goToHome(view: View?){
-        val intent = Intent(this, MainActivity::class.java )
-        startActivity(intent)
-    }
-
+    /**
+    @Description/Purpose : connect google
+    @Required Inputs :
+    @Expected Outputs : connect result
+     */
     override fun onActivityResult(requestCode:Int, resultCode: Int, data:Intent?){
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -171,6 +190,11 @@ class LoginPage : AppCompatActivity() {
         }
     }
 
+    /**
+    @Description/Purpose : use google account login system
+    @Required Inputs :
+    @Expected Outputs : success or fail,success will return to home page
+     */
     private fun firebaseAuthWithGoogleAccount(account: GoogleSignInAccount?){
         val credential = GoogleAuthProvider.getCredential(account!!.idToken,null)
         firebaseAuth.signInWithCredential(credential)
@@ -197,6 +221,11 @@ class LoginPage : AppCompatActivity() {
             }
     }
 
+    /**
+    @Description/Purpose : Login user
+    @Required Inputs : email, password
+    @Expected Outputs : success or fail,success will return to home page
+     */
     fun login(view:View){
         val editTextEmailAddress:EditText = findViewById(R.id.acInput)
         val email=editTextEmailAddress.text.toString()
@@ -218,6 +247,9 @@ class LoginPage : AppCompatActivity() {
         }
     }
 
+    /**
+    @Description/Purpose : generate secret key
+     */
     private fun generateSecretKey(keyGenParameterSpec: KeyGenParameterSpec) {
         val keyGenerator = KeyGenerator.getInstance(
             KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
@@ -225,6 +257,9 @@ class LoginPage : AppCompatActivity() {
         keyGenerator.generateKey()
     }
 
+    /**
+    @Description/Purpose : get secret key
+     */
     private fun getSecretKey(): SecretKey {
         val keyStore = KeyStore.getInstance("AndroidKeyStore")
 
@@ -233,12 +268,18 @@ class LoginPage : AppCompatActivity() {
         return keyStore.getKey(KEY_NAME, null) as SecretKey
     }
 
+    /**
+    @Description/Purpose : get Cipher
+     */
     private fun getCipher(): Cipher {
         return Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
                 + KeyProperties.BLOCK_MODE_CBC + "/"
                 + KeyProperties.ENCRYPTION_PADDING_PKCS7)
     }
 
+    /**
+    @Description/Purpose : go to home page
+     */
     private fun openHomePage(){
         val intent = Intent(this, MainActivity::class.java )
         startActivity(intent)
