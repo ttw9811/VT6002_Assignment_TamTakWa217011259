@@ -43,6 +43,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     protected var mLocationProvider: FusedLocationProviderClient? = null
 
     private lateinit var mMap: GoogleMap
+    /**
+    @Description/Purpose : location call back
+    @Required Inputs : GPS
+    @Expected Outputs : show location on map and display distance to target
+     */
     var mLocationCallBack: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             mLastLocation = result.lastLocation
@@ -73,6 +78,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        /**
+        @Description/Purpose : Permission to a location from a user
+         */
         val locationPermissionRequest = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions(),
             ActivityResultCallback<Map<String?, Boolean?>> { result: Map<String?, Boolean?> ->
@@ -124,7 +132,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //openSignPageBtn.text = myViewModel.openBtnStr
     }
 
-
+    /**
+    @Description/Purpose : input google map and target location
+    @Expected Outputs : display google map and target location
+     */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
@@ -134,6 +145,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,16.0f))
     }
 
+    /**
+    @Description/Purpose : get location
+    @Required Inputs : GPS
+    @Expected Outputs : return location from gps
+     */
     fun onStartClicked(local: View?){
         mLocationProvider = LocationServices.getFusedLocationProviderClient(this)
 
@@ -155,6 +171,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             mLocationCallBack, Looper.getMainLooper()
         )
     }
+
+    /**
+    @Description/Purpose : shake the phone to get location
+    @Required Inputs : shake
+    @Expected Outputs : return location from gps
+     */
     private val sensorListener: SensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
 
@@ -192,6 +214,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onPause()
     }
 
+    /**
+    @Description/Purpose : open sign in page
+    @Expected Outputs : display sign in page
+     */
     fun openSignIn(view:View){
         val btn:Button = findViewById(R.id.openLogin)
         if(btn.text=="Sign In"){
@@ -209,6 +235,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    /**
+    @Description/Purpose : open Cheongsam list page
+    @Expected Outputs : display Cheongsam list page
+     */
     fun openList(view:View){
         val intent = Intent(this, PhotoListActivity::class.java )
         startActivity(intent)

@@ -11,6 +11,11 @@ import android.widget.*
 import java.text.DateFormat.DEFAULT
 import java.util.*
 
+/**
+@Description/Purpose : Use when creating an adapter to provide display data
+@Required Inputs : context, taskList
+@Expected Outputs : display data on list
+ */
 class TaskAdapter (context: Context, taskList: MutableList<Task>) : BaseAdapter(){
     private val _inflater: LayoutInflater = LayoutInflater.from(context)
     private var _taskList = taskList
@@ -55,24 +60,54 @@ class TaskAdapter (context: Context, taskList: MutableList<Task>) : BaseAdapter(
         return view
     }
 
+    /**
+    @Description/Purpose : get data detail by index
+    @Required Inputs : index
+    @Expected Outputs : return data information
+     */
     override fun getItem(index: Int): Any {
         return _taskList.get(index)
     }
+
+    /**
+    @Description/Purpose : get data name by index
+    @Required Inputs : index
+    @Expected Outputs : return data name
+     */
     fun getItemName(index: Int): Any {
         return _taskList.get(index).name as String
     }
 
+    /**
+    @Description/Purpose : get data price by index
+    @Required Inputs : index
+    @Expected Outputs : return data price
+     */
     fun getItemPrice(index: Int): Any {
         return _taskList.get(index).price as String
     }
+
+    /**
+    @Description/Purpose : get data detail by id
+    @Required Inputs : id
+    @Expected Outputs : return data information
+     */
     override fun getItemId(index: Int): Long {
         return index.toLong()
     }
 
+    /**
+    @Description/Purpose : Take the data in total
+    @Required Inputs :
+    @Expected Outputs : return data total
+     */
     override fun getCount(): Int {
         return _taskList.size
     }
 
+    /**
+    @Description/Purpose : set display location
+     */
     private class ListRowHolder(row: View?) {
         val name: TextView = row!!.findViewById(R.id.textViewName) as TextView
         val price: TextView = row!!.findViewById(R.id.textViewDetail) as TextView
