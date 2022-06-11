@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     protected var mLocationRequest: LocationRequest? = null
     protected var mGeocoder: Geocoder? = null
     protected var mLocationProvider: FusedLocationProviderClient? = null
-
+    private var checkLocat:Boolean = false
     private lateinit var mMap: GoogleMap
     /**
     @Description/Purpose : location call back
@@ -54,14 +54,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             // Add a marker in Sydney and move the camera
             val sydney = LatLng(mLastLocation!!.latitude, mLastLocation!!.longitude)
             //val sydney = LatLng(22.2834, 114.1563)
-            mMap.addMarker(MarkerOptions().position(sydney).title("My Location"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,16.0f))
+            if(checkLocat){
+                mMap.clear()
+                val cheongsamSydney = LatLng(22.28475, 114.155332)
+                mMap.addMarker(MarkerOptions().position(cheongsamSydney).title("20s Hong Kong Qipao Experience"))
+                mMap.addMarker(MarkerOptions().position(sydney).title("My Location"))
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,16.0f))
+                checkLocat = false;
+            }
             val W = 6371;
             val x = (114.155332 - mLastLocation!!.longitude) * Math.cos((mLastLocation!!.latitude + 22.28475) / 2);
             val y = (22.28475 - mLastLocation!!.latitude);
             val distance = sqrt(x * x + y * y) * W;
             var mLongitudeText = findViewById<View>(R.id.distance) as TextView
             mLongitudeText.text = distance.toString()
+            //stopLocationUpdates()
         }
     }
 
@@ -166,11 +173,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
+        checkLocat = true
         mLocationProvider!!!!.requestLocationUpdates(
             mLocationRequest!!,
             mLocationCallBack, Looper.getMainLooper()
         )
     }
+
 
     /**
     @Description/Purpose : shake the phone to get location
